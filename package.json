@@ -1,0 +1,18 @@
+{
+  "name": "temporal-isolation-repro",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Minimal repro: Temporal TS SDK per-workflow module isolation silently disabled by webpack's const runtime output",
+  "type": "module",
+  "scripts": {
+    "repro": "tsx src/repro.ts",
+    "swap-webpack": "node swap-webpack.mjs"
+  },
+  "dependencies": {
+    "@temporalio/client": "1.19.0",
+    "@temporalio/testing": "1.19.0",
+    "@temporalio/worker": "1.19.0",
+    "@temporalio/workflow": "1.19.0",
+    "tsx": "^4.22.4"
+  }
+}
