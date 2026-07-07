@@ -30,5 +30,10 @@ if (version === "default") {
 }
 fs.writeFileSync("package.json", JSON.stringify(pkg, null, 2) + "\n");
 
+// Start from a clean slate so the override (or its removal) fully takes
+// effect — npm keeps an in-range locked version otherwise.
+fs.rmSync("package-lock.json", { force: true });
+fs.rmSync("node_modules", { recursive: true, force: true });
+
 execSync("npm install", { stdio: "inherit" });
-console.log("\nDone. Now run: pnpm run repro");
+console.log("\nDone. Now run: npm run repro");
