@@ -21,7 +21,9 @@ if (!version) {
 const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
 if (version === "default") {
   delete pkg.overrides;
-  console.log("Removed webpack override (npm will resolve the SDK's own range).");
+  console.log(
+    "Removed webpack override (npm will resolve the SDK's own range).",
+  );
 } else {
   pkg.overrides = { ...pkg.overrides, webpack: version };
   console.log(`Pinned webpack to ${version} via package.json "overrides".`);

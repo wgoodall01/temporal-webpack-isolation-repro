@@ -72,8 +72,8 @@ In `@temporalio/worker` v1.19.0:
   // Replace webpack's module cache with an object injected by the runtime.
   // This is the key to reusing a single v8 context.
   code = code.replace(
-    'var __webpack_module_cache__ = {}',
-    'var __webpack_module_cache__ = globalThis.__webpack_module_cache__'
+    "var __webpack_module_cache__ = {}",
+    "var __webpack_module_cache__ = globalThis.__webpack_module_cache__",
   );
   ```
 
@@ -89,8 +89,8 @@ In `@temporalio/worker` v1.19.0:
   per worker thread**; workflow and interceptor modules are then imported
   per-workflow via `importWorkflows()` / `importInterceptors()` inside
   `initRuntime`, after the activator is set, so their module state lands in the
-  per-workflow cache — *but only if the bundle's webpack runtime actually
-  references the global proxy*.
+  per-workflow cache — _but only if the bundle's webpack runtime actually
+  references the global proxy_.
 
 Webpack modernized its runtime output to use `const`/`let` where the target
 environment allows it (see webpack PR #21010 / `output.environment` handling).
@@ -114,23 +114,20 @@ on a worker thread share all module-level state, for the lifetime of the
 worker process. There is no error, no warning, and no workflow-task failure —
 failures manifest as downstream weirdness.
 
-How we found it (in a production-like system):
+How we found it (in a production system):
 
 - A workflow that keeps scheduling state in module-level variables got
   **permanently stuck**: it resumed from a timer, found a module-level
-  `Promise` left behind by a *different* workflow execution, and awaited it.
+  `Promise` left behind by a _different_ workflow execution, and awaited it.
   A promise created in another execution's context can never settle inside
   this workflow's activations, so the workflow hung silently — every
   subsequent workflow task (signals, child-workflow completions) completed
   with zero commands, and signals were ignored indefinitely. A
   `__stack_trace` query showed the main coroutine parked on that foreign
   `await`.
-- A query handler returning a module-level status object reported ~40
-  "in-flight" items when the run's own event history contained only 8 child
-  workflows — state accumulated from *other* executions sharing the module.
 - An OpenTelemetry workflow interceptor that caches its tracer / context
   manager in module scope only performed its OTel global registration for the
-  *first* workflow on each thread; every later workflow silently fell back to
+  _first_ workflow on each thread; every later workflow silently fell back to
   `NoopContextManager` (visible in stack-trace queries), quietly degrading
   tracing.
 
